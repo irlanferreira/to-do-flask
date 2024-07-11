@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block titulo %}Adicionar Tarefa{% endblock %}
+
+{% block conteudo %}
+    <form action="" method="post">
+        <label for="nomeForm">Nome da Tarefa</label><br>
+        <input type="text" name="nomeForm"><br>
+        <label for="descForm">Descrição</label><br>
+        <input type="text" name="descForm" placeholder="Opcional"><br>
+        <input type="submit" value="Adicionar">
+
+    </form>
+{% endblock %}

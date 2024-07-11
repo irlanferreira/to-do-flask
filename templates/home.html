@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block titulo %}Tarefas{% endblock %}
+
+{% block conteudo %}
+<h1>Olá, {{usuario.nome}}!</h1>
+<h2>Suas Tarefas</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Tarefa</th>
+            <th>Descrição</th>
+            <th>Situação</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tarefa in usuario.tarefas %}
+            <tr>
+                <td>{{tarefa.nome}}</td>
+                <td>{{tarefa.descricao}}</td>
+                <td><a href="/status/{{tarefa.id}}">{{tarefa.status_str}}</a></td>
+                <td><a href="/editar-tarefa/{{tarefa.id}}">Editar</a></td>
+                <td><a href="/deletar/{{tarefa.id}}">Deletar</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="/adicionar-tarefa">Criar Tarefa</a>
+{% endblock %}

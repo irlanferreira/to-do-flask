@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block titulo %}Login{% endblock %}
+
+{% block conteudo %}
+    {% with msgs = get_flashed_messages() %}
+        {% for msg in msgs %}
+            <p>{{msg}}</p>
+        {% endfor %}
+    {% endwith %}
+    <form action="" method="post">
+        <label for="nomeForm">Nome de Usuário</label><br>
+        <input type="text" name="nomeForm"><br>
+        <label for="senhaForm">Senha</label><br>
+        <input type="password" name="senhaForm"><br>
+        <input type="submit" value="Login">
+    </form>
+    Não tem um perfil? <a href="/cadastrar">Cadastre-se!</a>
+{% endblock %}

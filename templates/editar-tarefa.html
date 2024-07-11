@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block titulo %}Editar Tarefa{% endblock %}
+
+{% block conteudo %}
+    <form action="" method="post">
+        <label for="nomeForm">Nome da Tarefa</label><br>
+        <input type="text" name="nomeForm" value="{{tarefa.nome}}"><br>
+        <label for="descForm">Descrição</label><br>
+        <input type="text" name="descForm" value="{{tarefa.descricao}}" placeholder="Opcional"><br>
+        <input type="submit" value="Editar">
+    </form>
+{% endblock %}

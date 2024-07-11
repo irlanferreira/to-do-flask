@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block titulo %}Cadastrar{% endblock %}
+
+{% block conteudo %}
+    <form action="" method="post" onsubmit="return validarSenha()">
+        <label for="nomeForm">Nome de Usuário</label><br>
+        <input type="text" name="nomeForm"><br>
+        <label for="senhaForm">Senha</label><br>
+        <input type="password" name="senhaForm" id="senhaInput"><br>
+        <label for="senhaForm">Confirmar Senha</label><br>
+        <input type="password" name="confirmarSenhaForm" id="confirmarSenhaInput"><br>
+        <input type="submit" value="Cadastrar">
+    </form>
+
+    <script>
+        function validarSenha(){
+            var senha = document.getElementById('senhaInput').value
+            var senhaConfirmar = document.getElementById('confirmarSenhaInput').value
+
+            if (senha != senhaConfirmar){
+                alert('As senhas não coincidem!')
+                return false
+            }
+            return true
+        }
+    </script>
+
+{% endblock %}
