@@ -1,2 +1,6 @@
 __pycache__
 todovenv
+.env.development
+.env.production
+instance
+squarecloud.app

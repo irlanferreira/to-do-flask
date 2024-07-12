@@ -2,11 +2,16 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, LoginManager, current_user
 from models import Usuario, Tarefa
 from db import db
-import hashlib
+from waitress import serve
+from dotenv import load_dotenv
+import hashlib, os
+
+dev = True
+load_dotenv('.env.development' if dev else '.env.production')
 
 app = Flask(__name__)
 app.secret_key = 'tijolo'
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 db.init_app(app)
 lm = LoginManager(app)
 lm.login_view = 'login'
@@ -45,7 +50,7 @@ def login():
 @app.route('/cadastrar', methods=['GET', 'POST'])
 def cadastrar():
     if request.method == "GET":
-        return render_template('cadastrar-tarefa.html')
+        return render_template('cadastrar.html')
     elif request.method == 'POST':
         nome = request.form['nomeForm']
         senha = request.form['senhaForm']
@@ -123,4 +128,7 @@ def deletar(id):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    if dev:
+        app.run(debug=True)
+    else:
+        serve(app, host='0.0.0.0', port=80)
