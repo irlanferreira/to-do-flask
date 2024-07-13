@@ -2,17 +2,14 @@
 {% block titulo %}Login{% endblock %}
 
 {% block conteudo %}
-    {% with msgs = get_flashed_messages() %}
-        {% for msg in msgs %}
-            <p>{{msg}}</p>
-        {% endfor %}
-    {% endwith %}
-    <form action="" method="post">
-        <label for="nomeForm">Nome de Usuário</label><br>
-        <input type="text" name="nomeForm"><br>
-        <label for="senhaForm">Senha</label><br>
-        <input type="password" name="senhaForm"><br>
-        <input type="submit" value="Login">
-    </form>
-    Não tem um perfil? <a href="/cadastrar">Cadastre-se!</a>
+    <div id="div-form" class="container d-flex justify-content-center w-50">
+        <form action="" method="post">
+            <label for="nomeForm">Nome de Usuário</label><br>
+            <input class="form-control" type="text" name="nomeForm"><br>
+            <label for="senhaForm">Senha</label><br>
+            <input class="form-control" type="password" name="senhaForm"><br>
+            <input class="btn btn-success" type="submit" value="Login">
+            <p>Não tem um perfil? <a href="/cadastrar">Cadastre-se!</a></p>
+        </form>
+    </div>
 {% endblock %}

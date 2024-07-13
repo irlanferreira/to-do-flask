@@ -3,10 +3,13 @@
 
 {% block conteudo %}
 <link rel="stylesheet" href="{{url_for('static', filename='styles/home.css')}}">
-<h1>Olá, {{usuario.nome}}!</h1>
-<h2>Suas Tarefas</h2>
-<div id="tabela-div" class="container d-flex justify-content-center w-50">
-    <table class="table" id="tabela_tarefas">
+<div id="tabela-div" class="container d-flex flex-column justify-content-center w-70">
+    <div style="text-align: center;">
+        <h2>Olá, {{usuario.nome}}!</h2>
+        <br>
+        <h4>Suas Tarefas</h4>
+    </div>
+    <table class="table" id="tabela_tarefas" style="text-align: center;">
         <thead>
             <tr>
                 <th>Tarefa</th>
@@ -15,17 +18,26 @@
             </tr>
         </thead>
         <tbody>
-            {% for tarefa in usuario.tarefas %}
+            {% for tarefa in usuario.tarefas[::-1] %}
+            {% if tarefa.status == 0 %}
+                {% set btn = 'danger' %}
+            {% endif %}
+            {% if tarefa.status == 1 %}
+                {% set btn = 'warning' %}
+            {% endif %}
+            {% if tarefa.status == 2 %}
+                {% set btn = 'success' %}
+            {% endif %}
                 <tr>
                     <td>{{tarefa.nome}}</td>
                     <td>{{tarefa.descricao}}</td>
-                    <td><a href="/status/{{tarefa.id}}">{{tarefa.status_str}}</a></td>
-                    <td><a href="/editar-tarefa/{{tarefa.id}}">Editar</a></td>
-                    <td><a href="/deletar/{{tarefa.id}}">Deletar</a></td>
+                    <td><a class="btn btn-{{btn}} btn-sm" href="/status/{{tarefa.id}}">{{tarefa.status_str}}</a></td>
+                    <td><a class="" href="/editar-tarefa/{{tarefa.id}}"><img src="{{url_for('static',filename='images/editar.png')}}" style="width: 20px;" alt=""></a></td>
+                    <td><a class="" href="/deletar/{{tarefa.id}}"><img style="width: 20px;" src="{{url_for('static',filename='images/deletar.png')}}" alt=""></a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="/adicionar-tarefa" class="btn btn-outline-primary ml-auto" style="width: fit-content;">Adicionar Tarefa</a>
 </div>
-<a href="/adicionar-tarefa">Criar Tarefa</a>
 {% endblock %}

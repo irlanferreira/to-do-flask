@@ -6,7 +6,7 @@ from waitress import serve
 from dotenv import load_dotenv
 import hashlib, os
 
-dev = True
+dev = False
 load_dotenv('.env.development' if dev else '.env.production')
 
 app = Flask(__name__)
@@ -15,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
 db.init_app(app)
 lm = LoginManager(app)
 lm.login_view = 'login'
+lm.login_message = False
 
 def hash(txt):
     hash_obj = hashlib.sha256()
@@ -31,8 +32,30 @@ def user_lodaer(id):
 def home():
     return render_template('home.html', usuario=current_user)
 
+@app.route('/cadastrar', methods=['GET', 'POST'])
+def cadastrar():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    if request.method == "GET":
+        return render_template('cadastrar.html')
+    elif request.method == 'POST':
+        nome = request.form['nomeForm']
+        senha = request.form['senhaForm']
+        
+        usuario = db.session.query(Usuario).filter_by(nome=nome).first()
+        if usuario:
+            flash('Este nome já está sendo usado.')
+            return redirect(url_for('cadastrar'))
+        usuario = Usuario(nome=nome, senha=hash(senha))
+        db.session.add(usuario)
+        db.session.commit()
+        login_user(usuario)
+        return redirect(url_for('home'))
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     if request.method == "GET":
         return render_template('login.html')
     elif request.method == 'POST':
@@ -46,20 +69,6 @@ def login():
             return redirect(url_for('login'))
         login_user(usuario)
         return redirect(url_for('home'))
-
-@app.route('/cadastrar', methods=['GET', 'POST'])
-def cadastrar():
-    if request.method == "GET":
-        return render_template('cadastrar.html')
-    elif request.method == 'POST':
-        nome = request.form['nomeForm']
-        senha = request.form['senhaForm']
-        
-        usuario = Usuario(nome=nome, senha=hash(senha))
-        db.session.add(usuario)
-        db.session.commit()
-        login_user(usuario)
-        return redirect(url_for('home'))
     
 @app.route('/logout')
 @login_required
@@ -67,7 +76,21 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/adicionar-tarefa', methods=['GET', 'POST'])
+def adicionar_tarefa():
+    if request.method == "GET":
+        return render_template('adicionar-tarefa.html')
+    elif request.method == "POST":
+        nome = request.form['nomeForm']
+        desc = request.form['descForm']
+
+        tarefa = Tarefa(nome=nome, descricao=desc, usuario_id=current_user.id)
+        db.session.add(tarefa)
+        db.session.commit()
+        return redirect(url_for('home'))
+    
 @app.route('/status/<int:id>')
+@login_required
 def status(id):
     tarefa = db.session.query(Tarefa).filter_by(id=id).first()
     if current_user != tarefa.usuario:
@@ -85,20 +108,9 @@ def status(id):
     db.session.commit()
     return redirect(url_for('home'))
 
-@app.route('/adicionar-tarefa', methods=['GET', 'POST'])
-def adicionar_tarefa():
-    if request.method == "GET":
-        return render_template('adicionar-tarefa.html')
-    elif request.method == "POST":
-        nome = request.form['nomeForm']
-        desc = request.form['descForm']
-
-        tarefa = Tarefa(nome=nome, descricao=desc, usuario_id=current_user.id)
-        db.session.add(tarefa)
-        db.session.commit()
-        return redirect(url_for('home'))
 
 @app.route('/editar-tarefa/<int:id>', methods=['GET', 'POST'])
+@login_required
 def editar_tarefa(id):
     tarefa = db.session.query(Tarefa).filter_by(id=id).first()
     if tarefa.usuario != current_user:
@@ -116,6 +128,7 @@ def editar_tarefa(id):
         return redirect(url_for('home'))
 
 @app.route('/deletar/<int:id>')
+@login_required
 def deletar(id):
     tarefa = db.session.query(Tarefa).filter_by(id=id).first()
     if tarefa.usuario != current_user:
